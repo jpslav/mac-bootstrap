@@ -45,10 +45,25 @@ find_brew() {
 }
 
 if ! find_brew; then
+  # Take a sudo ticket BEFORE handing off to Homebrew's installer. Under
+  # NONINTERACTIVE it probes with `sudo -n -l mkdir`, which by design never
+  # prompts - so on a blank machine that has not yet cached a ticket the probe
+  # fails and it aborts with "Need sudo access on macOS (e.g. the user X needs
+  # to be an Administrator)!". That message is misleading: an Administrator who
+  # simply hasn't typed a password yet fails in exactly the same way.
+  echo "Homebrew needs sudo - enter your macOS password (just this once):"
+  if ! sudo -v; then
+    echo >&2
+    echo "ERROR: $(whoami) cannot use sudo, so Homebrew can't be installed." >&2
+    echo "Make this account an Administrator (System Settings > Users & Groups)" >&2
+    echo "and run this script again." >&2
+    exit 1
+  fi
+
   echo "Installing Homebrew..."
-  # NONINTERACTIVE=1 skips the "Press RETURN to continue" gate. It still asks for
-  # a password once - unavoidable this early, before my_mac can set up Touch ID
-  # for sudo.
+  # NONINTERACTIVE=1 skips the "Press RETURN to continue" gate. The password was
+  # taken above; my_mac's bootstrap picks up a keepalive loop shortly after, so
+  # that one prompt covers the whole install.
   NONINTERACTIVE=1 /bin/bash -c \
     "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   find_brew || true
