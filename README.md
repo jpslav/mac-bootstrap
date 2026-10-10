@@ -16,15 +16,22 @@ New dev VM (UTM/VM for Claude Code + Node work) — runs `my_mac/install_dev_vm.
 bash <(curl -fsSL https://raw.githubusercontent.com/jpslav/mac-bootstrap/main/dev_vm.sh)
 ```
 
+Standalone dev Mac (a real machine, not a VM, for Claude Code, Node and
+Docker work) — runs `my_mac/install_dev_mac.sh`:
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/jpslav/mac-bootstrap/main/dev_mac.sh)
+```
+
 Full personal Mac — runs `my_mac/install.sh`:
 
 ```bash
 bash <(curl -fsSL https://raw.githubusercontent.com/jpslav/mac-bootstrap/main/full_mac.sh)
 ```
 
-Both are idempotent and safe to re-run: each step checks current state first,
-and once `~/.my_mac` exists you can just run `~/.my_mac/install_dev_vm.sh` (or
-`install.sh`) directly and skip these entirely.
+All three are idempotent and safe to re-run: each step checks current state first,
+and once `~/.my_mac` exists you can just run the matching `~/.my_mac/install*.sh`
+directly and skip these entirely.
 
 ## What they do
 
@@ -38,7 +45,7 @@ and once `~/.my_mac` exists you can just run `~/.my_mac/install_dev_vm.sh` (or
    afterwards.
 5. `exec ~/.my_mac/<entry point>`.
 
-That's the whole scope. The two scripts are identical apart from which `my_mac`
+That's the whole scope. The three scripts are identical apart from which `my_mac`
 entry point they target.
 
 Step 4 used to be "fetch the entry point through the GitHub API into a temp file
